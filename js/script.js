@@ -229,47 +229,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ===== CONTACT FORM HANDLING =====
+    // ===== FIXED CONTACT FORM HANDLING =====
     const contactForm = document.querySelector('#contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
             // Get form elements
-            const formFields = this.querySelectorAll('input, textarea');
             const submitBtn = this.querySelector('#submit-btn');
             const originalBtnText = submitBtn.innerHTML;
             
-            // Disable form during submission
-            formFields.forEach(field => field.disabled = true);
+            // Show loading state but DON'T prevent default submission
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
             
-            // Submit to Formspree
-            fetch(this.action, {
-                method: 'POST',
-                body: new FormData(this),
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    // Success
-                    showNotification('Message sent successfully! I\'ll get back to you soon.', 'success');
-                    this.reset();
-                } else {
-                    // Error
-                    showNotification('Oops! There was a problem sending your message. Please try again.', 'danger');
-                }
-            }).catch(error => {
-                // Network error
-                showNotification('Network error. Please check your connection and try again.', 'danger');
-            }).finally(() => {
-                // Re-enable form
-                formFields.forEach(field => field.disabled = false);
+            // Re-enable button after a delay (form will submit to Formspree)
+            setTimeout(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
-            });
+            }, 3000);
+            
+            // Let the form submit naturally to Formspree
+            // Don't prevent default - let it go to Formspree
         });
     }
 
